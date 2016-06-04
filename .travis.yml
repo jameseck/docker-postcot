@@ -1,0 +1,16 @@
+sudo: required
+
+language: ruby
+rvm:
+  - 2.3.1
+
+services:
+  - docker
+
+before_install:
+  - bundle install
+  - export IMAGE=jameseckersall/docker-postcot
+  - docker build -t $IMAGE .
+
+script:
+  - bundle exec rake
