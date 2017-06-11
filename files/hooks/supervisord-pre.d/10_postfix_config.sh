@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# default 
+# default
 echo "Running Dovecot + Postfix"
 echo "Host: $APP_HOST (should be set)"
 echo "Database: $DB_NAME (should be set)"
@@ -9,6 +9,8 @@ echo "APP_HOST *required*, DB_NAME *required*, DB_USER, DB_PASSWORD"
 
 # defining mail name
 echo "localhost" > /etc/mailname
+
+[[ -z $DEBUG ]] && DEBUG=no
 
 # update config templates
 sed -i "s/{{DB_USER}}/$DB_USER/g"         /etc/postfix/mysql-email2email.cf
@@ -43,11 +45,11 @@ sed -i "s/{{DB_PASSWORD}}/$DB_PASSWORD/g" /etc/dovecot/dovecot-sql.conf
 
 sed -i "s/{{APP_HOST}}/$APP_HOST/g" /etc/dovecot/local.conf
 sed -i "s/{{DEBUG}}/$DEBUG/g"       /etc/dovecot/local.conf
-sed -i "s/{{SSL_CERT}}/$SSL_CERT/g" /etc/dovecot/conf.d/ssl.conf
-sed -i "s/{{SSL_KEY}}/$SSL_KEY/g"   /etc/dovecot/conf.d/ssl.conf
+sed -i "s,{{SSL_CERT}},$SSL_CERT_FILE,g" /etc/dovecot/conf.d/ssl.conf
+sed -i "s,{{SSL_KEY}},$SSL_KEY_FILE,g"   /etc/dovecot/conf.d/ssl.conf
 
-sed -i "s/{{SSL_CERT}}/$SSL_CERT/g" /etc/postfix/main.cf
-sed -i "s/{{SSL_KEY}}/$SSL_KEY/g"   /etc/postfix/main.cf
+sed -i "s,{{SSL_CERT}},$SSL_CERT_FILE,g" /etc/postfix/main.cf
+sed -i "s,{{SSL_KEY}},$SSL_KEY_FILE,g"   /etc/postfix/main.cf
 
 echo > /etc/aliases
 newaliases

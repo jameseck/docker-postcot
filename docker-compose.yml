@@ -1,0 +1,33 @@
+version: '2'
+services:
+  postcot:
+    build: .
+    image: jameseckersall/docker-postcot
+    depends_on:
+      - db
+    links:
+      - db
+    ports:
+      - "8025:8025"
+      - "8587:8587"
+      - "8993:8993"
+      - "8995:8995"
+    volumes:
+      - "~/gittmp/jameseck/docker-postcot/ssl:/etc/dovecot/ssl"
+    environment:
+      DEBUG: "yes"
+      SSL_CERT_FILE: /etc/dovecot/ssl/server.crt
+      SSL_KEY_FILE: /etc/dovecot/ssl/server.key
+      DB_HOST: db
+      DB_NAME: mail
+      DB_USER: mail
+      DB_PASSWORD: mysqlpw
+  db:
+    image: mariadb
+    volumes:
+      - "~/gittmp/jameseck/docker-postcot/docker-compose/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpw
+      MYSQL_DATABASE: mail
+      MYSQL_USER: mail
+      MYSQL_PASSWORD: mysqlpw
