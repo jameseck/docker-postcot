@@ -1,15 +1,21 @@
 FROM jameseckersall/docker-centos-base
+
+MAINTAINER James Eckersall <james.eckersall@gmail.com>
+
 RUN \
-  yum -y install postfix dovecot openssl dovecot-mysql dovecot-pigeonhole syslog-ng supervisor && \
+  yum -y install gettext postfix dovecot dovecot-mysql dovecot-pigeonhole openssl syslog-ng supervisor && \
   rm -rf /etc/dovecot/conf.d/*
+
 COPY files /
+
 RUN \
   groupadd -g 5000 vmail && \
   useradd -g vmail -u 5000 vmail -d /home/vmail -m && \
   chgrp postfix /etc/postfix/mysql-*.cf && \
   chgrp vmail /etc/dovecot/dovecot.conf && \
   chmod g+r /etc/dovecot/dovecot.conf && \
-  sed -i -E 's/^(\s*)system\(\);/\1unix-stream("\/dev\/log");/' /etc/syslog-ng/syslog-ng.conf
+  sed -i -E 's/^(\s*)system\(\);/\1unix-stream("\/dev\/log");/' /etc/syslog-ng/syslog-ng.conf && \
+  echo "localhost" > /etc/mailname
 
 RUN \
   postconf -e virtual_uid_maps=static:5000 && \
@@ -24,8 +30,8 @@ RUN \
   postconf -e smtpd_use_tls=yes && \
   postconf -e smtpd_tls_security_level=may && \
   postconf -e smtpd_tls_received_header=yes && \
-  postconf -e smtpd_tls_cert_file={{SSL_CERT}} && \
-  postconf -e smtpd_tls_key_file={{SSL_KEY}} && \
+  postconf -e smtpd_tls_cert_file='${SSL_CERT}' && \
+  postconf -e smtpd_tls_key_file='${SSL_KEY}' && \
   postconf -e smtpd_tls_mandatory_protocols='!SSLv2,!SSLv3' && \
   postconf -e smtpd_tls_protocols='!SSLv2,!SSLv3' && \
   postconf -e smtpd_tls_ciphers=high && \
