@@ -54,13 +54,13 @@ RUN \
   echo "8025 inet n - n - - smtpd -v -v" >> /etc/postfix/master.cf
 
 ENV \
+  DEBUG=no \
   SSL_CERT_FILE="" \
   SSL_KEY_FILE="" \
   DB_HOST="" \
-  DB_USER="" \
   DB_NAME="" \
-  DB_PASSWORD="" \
-  APP_HOST=""
+  DB_USER="" \
+  DB_PASSWORD=""
 
 # SMTP ports
 EXPOSE 8025 8587 8993 8995
