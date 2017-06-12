@@ -48,13 +48,17 @@ RUN \
 RUN \
   echo $'dovecot   unix  -       n       n       -       -       pipe \n \
     flags=DRhu user=vmail:vmail argv=/usr/libexec/dovecot/deliver -f ${sender} -a ${recipient} -d ${user}@${domain}' >> /etc/postfix/master.cf && \
-  echo $'8587 inet n - - - - smtpd \n \
+  echo $'${POSTFIX_AUTHSMTP} inet n - - - - smtpd \n \
     -o smtpd_recipient_restrictions=permit_sasl_authenticated,permit_mynetworks,chjeck_relay_domains,reject \n \
     -o smtpd_tls_security_level=encrypt' >> /etc/postfix/master.cf && \
-  echo "8025 inet n - n - - smtpd -v -v" >> /etc/postfix/master.cf
+  echo "${POSTFIX_SMTP} inet n - n - - smtpd -v -v" >> /etc/postfix/master.cf
 
 ENV \
   DEBUG=no \
+  POSTFIX_SMTP=8025 \
+  POSTFIX_AUTHSMTP=8587 \
+  DOVECOT_POPS_PORT=8995 \
+  DOVECOT_IMAPS_PORT=8993 \
   SSL_CERT_FILE="" \
   SSL_KEY_FILE="" \
   DB_HOST="" \
